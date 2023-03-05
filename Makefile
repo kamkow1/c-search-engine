@@ -1,6 +1,6 @@
 # tool macros
 CC ?= gcc
-CFLAGS := -Werror -Wall -Llibhttp/lib/libhttp.a
+CFLAGS := -Werror -Wall -Lonion/build/src/onion/libonion.a -Ionion/src/onion
 DBGFLAGS := -g
 COBJFLAGS := $(CFLAGS) -c
 

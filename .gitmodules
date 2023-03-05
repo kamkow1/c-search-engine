@@ -1,3 +1,6 @@
 [submodule "libhttp"]
 	path = libhttp
 	url = https://github.com/lammertb/libhttp.git
+[submodule "onion"]
+	path = onion
+	url = https://github.com/davidmoreno/onion.git
