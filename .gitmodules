@@ -4,3 +4,6 @@
 [submodule "onion"]
 	path = onion
 	url = https://github.com/davidmoreno/onion.git
+[submodule "snowball"]
+	path = snowball
+	url = https://github.com/snowballstem/snowball.git

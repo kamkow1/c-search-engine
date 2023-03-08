@@ -1,12 +1,27 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <stddef.h>
 
-#include "onion.h"
-#include "shortcuts.h"
-#include "log.h"
+#include "onion/onion.h"
+#include "onion/shortcuts.h"
+#include "onion/log.h"
+
+#include "libstemmer.h"
+
+#define LANG "english"
 
 onion *SERVER = NULL;
+
+void process_input(const char *input)
+{
+  const char *charenc = NULL;
+  struct sb_stemmer *stemmer = sb_stemmer_new(LANG, charenc);
+  const sb_symbol *output = sb_stemmer_stem(stemmer, (sb_symbol*)input, strlen(input));
+
+  printf("Stemmer Output: %s\n", (char*)output);
+  sb_stemmer_delete(stemmer);
+}
 
 onion_connection_status query_results(void *_, onion_request *req, onion_response *res)
 {
@@ -15,7 +30,11 @@ onion_connection_status query_results(void *_, onion_request *req, onion_respons
     return OCS_PROCESSED;
   }
   const char *query = onion_request_get_post(req, "query");
+  printf("Processing Query: %s\n", query);
+
   onion_response_printf(res, "query: %s", query);
+  process_input(query);
+
   return OCS_PROCESSED;
 }
 
