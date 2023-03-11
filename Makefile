@@ -1,6 +1,6 @@
 # tool macros
 CC ?= gcc
-CFLAGS := -Werror -Wall -lonion -Ionion/src -Lsnowball -lstemmer -Isnowball/runtime -Isnowball/include
+CFLAGS := -Werror -Wall -lonion -Ionion/src -Lsnowball -lstemmer -Isnowball/runtime -Isnowball/include -ljson-c
 DBGFLAGS := -g
 COBJFLAGS := $(CFLAGS) -c
 

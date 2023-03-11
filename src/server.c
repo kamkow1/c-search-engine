@@ -3,10 +3,10 @@
 #include <signal.h>
 #include <stddef.h>
 
+#include "onion/response.h"
 #include "onion/onion.h"
 #include "onion/shortcuts.h"
 #include "onion/log.h"
-#include "onion/response.h"
 
 #include "server.h"
 #include "query.h"

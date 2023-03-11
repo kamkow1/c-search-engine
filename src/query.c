@@ -12,3 +12,4 @@ void query_stem(const char *input, char *buffer)
   for (size_t i = 0; i < strlen((char*)output); i++) buffer[i] = output[i];
   sb_stemmer_delete(stemmer);
 }
+
