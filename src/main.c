@@ -1,3 +1,4 @@
+#include <onion/response.h>
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
@@ -13,13 +14,13 @@
 
 onion *SERVER = NULL;
 
-void process_input(const char *input)
+void stem_input(const char *input, char *buffer)
 {
   const char *charenc = NULL;
   struct sb_stemmer *stemmer = sb_stemmer_new(LANG, charenc);
   const sb_symbol *output = sb_stemmer_stem(stemmer, (sb_symbol*)input, strlen(input));
 
-  printf("Stemmer Output: %s\n", (char*)output);
+  for (size_t i = 0; i < strlen((char*)output); i++) buffer[i] = output[i];
   sb_stemmer_delete(stemmer);
 }
 
@@ -32,8 +33,13 @@ onion_connection_status query_results(void *_, onion_request *req, onion_respons
   const char *query = onion_request_get_post(req, "query");
   printf("Processing Query: %s\n", query);
 
-  onion_response_printf(res, "query: %s", query);
-  process_input(query);
+  char buffer[1024];
+  memset(buffer, 0, sizeof(buffer));
+  stem_input(query, buffer);
+
+  printf("Processed Query: %s\n", buffer);
+
+  onion_response_printf(res, "query: %s", buffer);
 
   return OCS_PROCESSED;
 }
@@ -41,7 +47,10 @@ onion_connection_status query_results(void *_, onion_request *req, onion_respons
 void exit_handler(int _)
 {
   ONION_INFO("Exit");
-  if (SERVER) onion_listen_stop(SERVER);
+  if (SERVER) {
+    onion_listen_stop(SERVER);
+    onion_free(SERVER);
+  }
 }
 
 int main(void)
@@ -69,10 +78,11 @@ int main(void)
 
   onion_url_add(urls, "results", query_results);
 
+  onion_listen(SERVER);
+
   signal(SIGTERM, exit_handler);
   signal(SIGINT, exit_handler);
 
-  onion_listen(SERVER);
   onion_free(SERVER);
 
   return 0;
