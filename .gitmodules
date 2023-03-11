@@ -7,3 +7,6 @@
 [submodule "snowball"]
 	path = snowball
 	url = https://github.com/snowballstem/snowball.git
+[submodule "json-c"]
+	path = json-c
+	url = https://github.com/json-c/json-c.git
