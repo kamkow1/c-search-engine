@@ -7,6 +7,7 @@
 #include <dirent.h>
 
 #include "fs.h"
+#include "da.h"
 #include "defer.h"
 #include "index.h"
 
@@ -41,9 +42,11 @@ int fs_process_dir(Index *index, char *path)
     } else {
       printf("Indexing: `%s`\n", fullname);
 
+      da_append(index, (File){.path = fullname});
+
       char buffer[1024*8];
       fs_load_file(fullname, buffer, sizeof(buffer));
-      if (index) index_process_buffer(index, buffer);
+      if (index) index_process_buffer(index, index->count-1, buffer);
     }
   }
 

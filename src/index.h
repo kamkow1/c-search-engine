@@ -21,17 +21,7 @@ typedef struct {
   size_t count;
 } Index;
 
-typedef struct {
-  char *text;
-} Token;
-
-typedef struct {
-  Token *items;
-  size_t cap;
-  size_t count;
-} Token_Stream;
-
-void index_process_buffer(Index *index, char *buffer);
+void index_process_buffer(Index *index, size_t file_index, char *buffer);
 
 #endif // INDEX_H
 
