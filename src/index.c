@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "defer.h"
 #include "index.h"
@@ -32,13 +33,30 @@ void index_process_buffer(Index *index, size_t file_index, char *buffer)
   Ranked_Terms rt;
   da_init(&rt);
 
-  char *word = strtok(buffer, IGNORED_TOKENS);
+  char *buffer_copy = (char*)malloc(strlen(buffer)+1);
+  defer { free(buffer_copy); }
+  strcpy(buffer_copy, buffer);
+
+  char *word = strtok(buffer_copy, IGNORED_TOKENS);
   while (word) {
     // to lowercase
     for (char *c = word; *c; ++c) *c = *c > 0x40 && *c < 0x5b ? *c | 0x60 : *c;
+    size_t k = 0;
+    for (char *c = word; *c; ++c) {
+      if (!isascii(*c)) {
+        printf("Error: non Ascii character encountered in word: `%s`\n", word);
+        *c = '\0';
+        printf("Fixed: `%s`\n", word);
+      }
+      word[k] = *c;
+      k++;
+    }
 
     char *stemmed_word = (char*)malloc(sizeof(char)*256);
     query_stem(word, stemmed_word);
+
+    for (size_t i = 0; i < rt.count; i++)
+      if (!strcmp(rt.items[i], word)) goto skip; 
 
     da_append(&index->items[file_index], (Term){.normalized_name = stemmed_word});
     index_rank_term(
@@ -47,7 +65,8 @@ void index_process_buffer(Index *index, size_t file_index, char *buffer)
         &da_last(&index->items[file_index])
     );
 
-    da_append(&rt, index->items[file_index].items[index->items[file_index].count-1].normalized_name);
+    da_append(&rt, da_last(&index->items[file_index]).normalized_name);
+skip:
     word = strtok(NULL, IGNORED_TOKENS);
   }
 }
