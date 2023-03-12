@@ -14,8 +14,10 @@
 
 int main(int argc, char **argv)
 {
+  char *output_name = "index";
   int opt;
-  while ((opt = getopt(argc, argv, "si")) != -1) {
+
+  while ((opt = getopt(argc, argv, "s:i:o:")) != -1) {
     switch (opt) {
     case 's': {
       printf("Starting the server...\n");
@@ -23,7 +25,8 @@ int main(int argc, char **argv)
       server_run();
     } break;
     case 'i': {
-      char *dirpath = realpath(argv[2], NULL);
+      printf("%s\n", optarg);
+      char *dirpath = realpath(optarg, NULL);
       defer { free(dirpath); }
 
       printf("Indexing directory: `%s`\n", dirpath);
@@ -31,14 +34,13 @@ int main(int argc, char **argv)
       Index index;
       da_init(&index);
       for (size_t i = 0; i < index.count; i++) da_init(&index.items[i]);
-
       fs_process_dir(&index, dirpath);
-      //index_debug_print(&index);
 
-      index_save(&index, "index", ISI_JSON);
-
-      //index_free_terms(&index);
+      index_save(&index, output_name, ISI_JSON);
       index_full_free(&index);
+    } break;
+    case 'o': {
+      output_name = optarg;
     } break;
     default:
       printf("Unsage: %s [-si] [args...]", argv[0]);

@@ -83,24 +83,21 @@ void index_save_json(Index *index, char *name)
 
     json_object_object_add(file, "terms", terms);
     json_object_array_add(json, file);
-
-    const char *json_string = json_object_to_json_string_ext(json, JSON_C_TO_STRING_PRETTY);
-
-    if (!name) {
-      printf("No file provided. Printing to Stdout:\n\n%s\n", json_string);
-    } else {
-      printf("Saving to `%s`\n", name);
-      char buffer[2048];
-      sprintf(buffer, "%s.json", name);
-      FILE *fp = fopen(buffer, "w+");
-      if (!fp) fprintf(stderr, "Failed to open file for writing: `%s`\n", buffer);
-
-      defer { fclose(fp); }
-      fprintf(fp, json_string);
-    }
   }
 
-  printf("%s\n", json_object_to_json_string_ext(json, JSON_C_TO_STRING_PRETTY));
+  const char *json_string = json_object_to_json_string_ext(json, JSON_C_TO_STRING_PRETTY);
+  if (!name) {
+    printf("No file provided. Printing to Stdout:\n\n%s\n", json_string);
+  } else {
+    printf("Saving to `%s`\n", name);
+    char buffer[2048];
+    sprintf(buffer, "%s.json", name);
+    FILE *fp = fopen(buffer, "w+");
+    if (!fp) fprintf(stderr, "Failed to open file for writing: `%s`\n", buffer);
+
+    defer { fclose(fp); }
+    fprintf(fp, json_string);
+  }
 
   json_object_put(json);
 }
