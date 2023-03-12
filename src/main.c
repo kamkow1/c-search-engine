@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "da.h"
+#include "index.h"
 #include "query.h"
 #include "server.h"
 #include "defer.h"
@@ -32,6 +33,12 @@ int main(int argc, char **argv)
       for (size_t i = 0; i < index.count; i++) da_init(&index.items[i]);
 
       fs_process_dir(&index, dirpath);
+      //index_debug_print(&index);
+
+      index_save(&index, "index", ISI_JSON);
+
+      //index_free_terms(&index);
+      index_full_free(&index);
     } break;
     default:
       printf("Unsage: %s [-si] [args...]", argv[0]);

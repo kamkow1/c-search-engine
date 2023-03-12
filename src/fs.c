@@ -30,7 +30,7 @@ int fs_process_dir(Index *index, char *path)
 
   struct dirent *entry;
   while ((entry = readdir(dir))) {
-    char fullname[256] = {0};
+    char *fullname = (char*)malloc(sizeof(char)*256);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-truncation"
     snprintf(fullname, 100, "%s/%s", path, entry->d_name);

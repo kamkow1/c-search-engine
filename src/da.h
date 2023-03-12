@@ -23,5 +23,12 @@
   (da)->items = malloc(sizeof(*(da)->items)*(da)->cap); \
 } \
 
+#define da_free(da) \
+{ \
+  free((da)->items); \
+} \
+
+#define da_last(da) ((da)->items[(da)->count-1])
+
 #endif // DA_H
 
